@@ -1,0 +1,21 @@
+# datasource.yaml
+apiVersion: 1
+
+datasources:
+  - name: PostgreSQL-Internal # You can rename this if you like
+    type: postgres
+    uid: dejabdkce2tj4b      # This UID MUST match the one in your dashboard JSON
+    # url: ${GF_DATASOURCE_POSTGRES_URL:-postgres-db:5432} # Env var for host:port, defaults to postgres:5432
+    url: postgres-db:5432 # Env var for host:port, defaults to postgres:5432
+    # user: ${GF_DATASOURCE_POSTGRES_USER:-appuser}             # Env var for database user
+    user: appuser             # Env var for database user
+    # database: ${GF_DATASOURCE_POSTGRES_DB:-mydatabase}           # Env var for database name
+    database: mydatabase           # Env var for database name
+    secureJsonData:
+      # password: ${GF_DATASOURCE_POSTGRES_PASSWORD:-password} # Env var for database password
+      password: password # Env var for database password
+    jsonData:
+      # sslmode: ${GF_DATASOURCE_POSTGRES_SSLMODE:-disable} # Env var for SSL mode, defaults to 'disable'
+      sslmode: disable # Env var for SSL mode, defaults to 'disable'
+      # Add other PostgreSQL settings if needed, e.g.:
+      # timescaledb: true

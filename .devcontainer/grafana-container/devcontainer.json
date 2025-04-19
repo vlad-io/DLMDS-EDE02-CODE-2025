@@ -1,0 +1,7 @@
+{
+	"name": "grafana",
+	"service": "grafana",
+	"dockerComposeFile": ["../../docker-compose.yml"],
+	"shutdownAction": "stopCompose",
+	"workspaceFolder": "/workspace"
+}

@@ -1,0 +1,117 @@
+services:
+  python-app:
+    build:
+      context: .
+      dockerfile: python-app.Dockerfile
+    volumes:
+      - .:/workspace
+    command: tail -f /dev/null
+    ports:
+      - "5000:5000"
+
+  drone-1:
+    build:
+      context: .
+      dockerfile: python-app.Dockerfile
+    volumes:
+      - .:/workspace
+    command: sh -c "python3 /workspace/drone_app_long_flight.py"
+    depends_on:
+      - kafka
+      - grafana
+      - tower
+    environment:
+      DRONE_ID: 1
+  drone-2:
+    build:
+      context: .
+      dockerfile: python-app.Dockerfile
+    volumes:
+      - .:/workspace
+    command: sh -c "python3 /workspace/drone_app_long_flight.py"
+    depends_on:
+      - kafka
+      - grafana
+      - tower
+    environment:
+      DRONE_ID: 2
+  drone-3:
+    build:
+      context: .
+      dockerfile: python-app.Dockerfile
+    volumes:
+      - .:/workspace
+    command: sh -c "python3 /workspace/drone_app_long_flight.py"
+    depends_on:
+      - kafka
+      - grafana
+      - tower
+    environment:
+      DRONE_ID: 3
+
+  tower:
+    build:
+      context: .
+      dockerfile: python-app.Dockerfile
+    volumes:
+      - .:/workspace
+    command: sh -c "python3 /workspace/tower_app.py"
+    depends_on:
+      - kafka
+      - postgres-db
+    environment:
+      DRONE_QUANTITY: 3
+
+  postgres-db:
+    container_name: postgres-db
+    build:
+      context: .
+      dockerfile: postgres.Dockerfile
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: appuser
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: mydatabase
+    # volumes:
+    #   - postgres-data:/var/lib/postgresql/data
+    restart: always
+
+  kafka:
+    image: wurstmeister/kafka
+    container_name: kafka
+    ports:
+      - "9092:9092"
+    depends_on:
+      - zookeeper
+      - postgres-db
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
+
+  zookeeper:
+    image: wurstmeister/zookeeper
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+
+  grafana:
+    container_name: grafana
+    build:
+      context: .
+      dockerfile: grafana.Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres-db
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_DATASOURCE_POSTGRES_URL=postgres-db:5432
+      - GF_DATASOURCE_POSTGRES_USER=appuser
+      - GF_DATASOURCE_POSTGRES_DB=mydatabase
+      - GF_DATASOURCE_POSTGRES_PASSWORD=password
+      - GF_DATASOURCE_POSTGRES_SSLMODE=disable 
+    restart: always

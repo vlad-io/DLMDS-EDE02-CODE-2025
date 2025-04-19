@@ -1,0 +1,7 @@
+{
+	"name": "kafka",
+	"service": "kafka",
+	"dockerComposeFile": ["../../docker-compose.yml"],
+	"shutdownAction": "stopCompose",
+	"workspaceFolder": "/workspace"
+}

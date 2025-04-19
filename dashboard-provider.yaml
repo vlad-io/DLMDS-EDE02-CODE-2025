@@ -1,0 +1,12 @@
+# dashboard-provider.yaml
+apiVersion: 1
+
+providers:
+  - name: 'default-dashboards' # A name for this provider configuration
+    orgId: 1                   # Default organization ID
+    folder: ''                 # Import dashboards into the root folder
+    type: file
+    disableDeletion: false     # Allow Grafana to delete dashboards if the file is removed
+    editable: true             # Allow dashboards to be edited in the UI
+    options:
+      path: /etc/grafana/provisioning/dashboards # The directory Grafana will scan
